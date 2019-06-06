@@ -17,6 +17,11 @@ from ._2d import (
     bottleneck_2d
 )
 
+from ._2dxnor import (
+    basic_2dxnor,
+    bottleneck_2dxnor
+)
+
 from ._3d import (
     basic_3d,
     bottleneck_3d

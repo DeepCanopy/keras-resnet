@@ -27,6 +27,16 @@ from ._2d import (
     ResNet2D200
 )
 
+from ._2dxnor import (
+    ResNet2Dxnor,
+    ResNet2Dxnor18,
+    ResNet2Dxnor34,
+    ResNet2Dxnor50,
+    ResNet2Dxnor101,
+    ResNet2Dxnor152,
+    ResNet2Dxnor200
+)
+
 from ._3d import (
     ResNet3D,
     ResNet3D18,
@@ -62,6 +72,10 @@ ResNet = ResNet2D
 ResNet18 = ResNet2D18
 ResNet34 = ResNet2D34
 ResNet50 = ResNet2D50
+ResNet50xnor = ResNet2Dxnor50
 ResNet101 = ResNet2D101
+ResNet101xnor = ResNet2Dxnor101
 ResNet152 = ResNet2D152
+ResNet152xnor = ResNet2Dxnor152
 ResNet200 = ResNet2D200
+ResNet200xnor = ResNet2Dxnor200

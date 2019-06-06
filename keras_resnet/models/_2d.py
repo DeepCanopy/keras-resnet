@@ -241,7 +241,7 @@ class ResNet2D50(ResNet2D):
             *args,
             **kwargs
         )
-
+    print('Ran Broad Institute ResNet2D50')
 
 class ResNet2D101(ResNet2D):
     """
