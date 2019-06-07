@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-keras_resnet.models._2d
-~~~~~~~~~~~~~~~~~~~~~~~
+keras_resnet.classifiers
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-This module implements popular two-dimensional residual models.
+This module implements popular residual two-dimensional classifiers.
 """
 
 #import keras.backend
@@ -12,8 +12,7 @@ import keras.layers
 import keras.models
 import keras.regularizers
 
-import keras_resnet.blocks
-import keras_resnet.layers
+import keras_resnet.models
 
 #
   #
@@ -381,372 +380,177 @@ XnorConvolution2D = XnorConv2D
   #
 #
 
-class ResNet2Dxnor(keras.Model):
+
+class ResNet18(keras.models.Model):
     """
-    Constructs a `keras.models.Model` object using the given block count.
+    A :class:`ResNet18 <ResNet18>` object.
 
     :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
 
-    :param blocks: the network’s residual architecture
-
-    :param block: a residual block (e.g. an instance of `keras_resnet.blocks.basic_2d`)
-
-    :param include_top: if true, includes classification layers
-
-    :param classes: number of classes to classify (include_top must be true)
-
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
-
-    :param numerical_names: list of bool, same size as blocks, used to indicate whether names of layers should include numbers or letters
-
-    :return model: ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
-
     Usage:
 
-        >>> import keras_resnet.blocks
-        >>> import keras_resnet.models
+        >>> import keras_resnet.classifiers
 
         >>> shape, classes = (224, 224, 3), 1000
 
         >>> x = keras.layers.Input(shape)
 
-        >>> blocks = [2, 2, 2, 2]
-
-        >>> block = keras_resnet.blocks.basic_2d
-
-        >>> model = keras_resnet.models.ResNet(x, classes, blocks, block, classes=classes)
+        >>> model = keras_resnet.classifiers.ResNet18(x)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
-    def __init__(
-        self,
-        inputs,
-        blocks,
-        block,
-        include_top=True,
-        classes=1000,
-        freeze_bn=True,
-        numerical_names=None,
-        *args,
-        **kwargs
-    ):
-#        if keras.backend.image_data_format() == "channels_last":
-        if K.image_data_format() == "channels_last":
-            axis = 3
-        else:
-            axis = 1
+    def __init__(self, inputs, classes):
+        outputs = keras_resnet.models.ResNet18(inputs)
 
-        if numerical_names is None:
-            numerical_names = [True] * len(blocks)
+        outputs = keras.layers.Flatten()(outputs.output)
 
-#        x = keras.layers.Conv2D(64, (7, 7), strides=(2, 2), use_bias=False, name="conv1", padding="same")(inputs)
-        x = XnorConv2D(64, kernel_size=(7, 7), strides=(2, 2), use_bias=False, name="conv1", padding="same")(inputs)
-        x = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn_conv1")(x)
-        x = keras.layers.Activation("relu", name="conv1_relu")(x)
-        x = keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding="same", name="pool1")(x)
+#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+        outputs = XnorDense(classes, activation="softmax")(outputs)
 
-        features = 64
-
-        outputs = []
-
-        for stage_id, iterations in enumerate(blocks):
-            for block_id in range(iterations):
-                x = block(
-                    features,
-                    stage_id,
-                    block_id,
-                    numerical_name=(block_id > 0 and numerical_names[stage_id]),
-                    freeze_bn=freeze_bn
-                )(x)
-
-            features *= 2
-
-            outputs.append(x)
-
-        if include_top:
-            assert classes > 0
-
-            x = keras.layers.GlobalAveragePooling2D(name="pool5")(x)
-#            x = keras.layers.Dense(classes, activation="softmax", name="fc1000")(x)
-            x = XnorDense(classes, activation="softmax", name="fc1000")(x)
-
-            super(ResNet2Dxnor, self).__init__(inputs=inputs, outputs=x, *args, **kwargs)
-        else:
-            # Else output each stages features
-            super(ResNet2Dxnor, self).__init__(inputs=inputs, outputs=outputs, *args, **kwargs)
+        super(ResNet18, self).__init__(inputs, outputs)
 
 
-class ResNet2Dxnor18(ResNet2Dxnor):
+class ResNet34(keras.models.Model):
     """
-    Constructs a `keras.models.Model` according to the ResNet18 specifications.
+    A :class:`ResNet34 <ResNet34>` object.
 
     :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
 
-    :param blocks: the network’s residual architecture
-
-    :param include_top: if true, includes classification layers
-
-    :param classes: number of classes to classify (include_top must be true)
-
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
-
-    :return model: ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
-
     Usage:
 
-        >>> import keras_resnet.models
+        >>> import keras_resnet.classifiers
 
         >>> shape, classes = (224, 224, 3), 1000
 
         >>> x = keras.layers.Input(shape)
 
-        >>> model = keras_resnet.models.ResNet18(x, classes=classes)
+        >>> model = keras_resnet.classifiers.ResNet34(x)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
-    def __init__(self, inputs, blocks=None, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
-        if blocks is None:
-            blocks = [2, 2, 2, 2]
+    def __init__(self, inputs, classes):
+        outputs = keras_resnet.models.ResNet34(inputs)
 
-        super(ResNet2Dxnor18, self).__init__(
-            inputs,
-            blocks,
-            block=keras_resnet.blocks.basic_2dxnor,
-            include_top=include_top,
-            classes=classes,
-            freeze_bn=freeze_bn,
-            *args,
-            **kwargs
-        )
+        outputs = keras.layers.Flatten()(outputs.output)
+
+#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+        outputs = XnorDense(classes, activation="softmax")(outputs)
+    
+        super(ResNet34, self).__init__(inputs, outputs)
 
 
-class ResNet2Dxnor34(ResNet2Dxnor):
+class ResNet50(keras.models.Model):
     """
-    Constructs a `keras.models.Model` according to the ResNet34 specifications.
+    A :class:`ResNet50 <ResNet50>` object.
 
     :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
 
-    :param blocks: the network’s residual architecture
-
-    :param include_top: if true, includes classification layers
-
-    :param classes: number of classes to classify (include_top must be true)
-
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
-
-    :return model: ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
-
     Usage:
 
-        >>> import keras_resnet.models
+        >>> import keras_resnet.classifiers
 
         >>> shape, classes = (224, 224, 3), 1000
 
         >>> x = keras.layers.Input(shape)
 
-        >>> model = keras_resnet.models.ResNet34(x, classes=classes)
+        >>> model = keras_resnet.classifiers.ResNet50(x)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
-    def __init__(self, inputs, blocks=None, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
-        if blocks is None:
-            blocks = [3, 4, 6, 3]
+    def __init__(self, inputs, classes):
+        outputs = keras_resnet.models.ResNet50(inputs)
 
-        super(ResNet2Dxnor34, self).__init__(
-            inputs,
-            blocks,
-            block=keras_resnet.blocks.basic_2dxnor,
-            include_top=include_top,
-            classes=classes,
-            freeze_bn=freeze_bn,
-            *args,
-            **kwargs
-        )
+        outputs = keras.layers.Flatten()(outputs.output)
+
+#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+        outputs = XnorDense(classes, activation="softmax")(outputs)
+    
+        super(ResNet50, self).__init__(inputs, outputs)
 
 
-class ResNet2Dxnor50(ResNet2Dxnor):
+class ResNet101(keras.models.Model):
     """
-    Constructs a `keras.models.Model` according to the ResNet50 specifications.
+    A :class:`ResNet101 <ResNet101>` object.
 
     :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
 
-    :param blocks: the network’s residual architecture
-
-    :param include_top: if true, includes classification layers
-
-    :param classes: number of classes to classify (include_top must be true)
-
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
-
-    :return model: ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
-
     Usage:
 
-        >>> import keras_resnet.models
+        >>> import keras_resnet.classifiers
 
         >>> shape, classes = (224, 224, 3), 1000
 
         >>> x = keras.layers.Input(shape)
 
-        >>> model = keras_resnet.models.ResNet50(x)
+        >>> model = keras_resnet.classifiers.ResNet101(x)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
-    def __init__(self, inputs, blocks=None, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
-        if blocks is None:
-            blocks = [3, 4, 6, 3]
+    def __init__(self, inputs, classes):
+        outputs = keras_resnet.models.ResNet101(inputs)
 
-        numerical_names = [False, False, False, False]
+        outputs = keras.layers.Flatten()(outputs.output)
 
-        super(ResNet2Dxnor50, self).__init__(
-            inputs,
-            blocks,
-            numerical_names=numerical_names,
-            block=keras_resnet.blocks.bottleneck_2dxnor,
-            include_top=include_top,
-            classes=classes,
-            freeze_bn=freeze_bn,
-            *args,
-            **kwargs
-        )
-    print('Ran Broad Institute ResNet2Dxnor50')
+#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+        outputs = XnorDense(classes, activation="softmax")(outputs)
 
-class ResNet2Dxnor101(ResNet2Dxnor):
+        super(ResNet101, self).__init__(inputs, outputs)
+
+
+class ResNet152(keras.models.Model):
     """
-    Constructs a `keras.models.Model` according to the ResNet101 specifications.
+    A :class:`ResNet152 <ResNet152>` object.
 
     :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
 
-    :param blocks: the network’s residual architecture
-
-    :param include_top: if true, includes classification layers
-
-    :param classes: number of classes to classify (include_top must be true)
-
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
-
-    :return model: ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
-
     Usage:
 
-        >>> import keras_resnet.models
+        >>> import keras_resnet.classifiers
 
         >>> shape, classes = (224, 224, 3), 1000
 
         >>> x = keras.layers.Input(shape)
 
-        >>> model = keras_resnet.models.ResNet101(x, classes=classes)
+        >>> model = keras_resnet.classifiers.ResNet152(x)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
+
     """
-    def __init__(self, inputs, blocks=None, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
-        if blocks is None:
-            blocks = [3, 4, 23, 3]
+    def __init__(self, inputs, classes):
+        outputs = keras_resnet.models.ResNet152(inputs)
 
-        numerical_names = [False, True, True, False]
+        outputs = keras.layers.Flatten()(outputs.output)
 
-        super(ResNet2Dxnor101, self).__init__(
-            inputs,
-            blocks,
-            numerical_names=numerical_names,
-            block=keras_resnet.blocks.bottleneck_2dxnor,
-            include_top=include_top,
-            classes=classes,
-            freeze_bn=freeze_bn,
-            *args,
-            **kwargs
-        )
+#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+        outputs = XnorDense(classes, activation="softmax")(outputs)
+
+        super(ResNet152, self).__init__(inputs, outputs)
 
 
-class ResNet2Dxnor152(ResNet2Dxnor):
+class ResNet200(keras.models.Model):
     """
-    Constructs a `keras.models.Model` according to the ResNet152 specifications.
+    A :class:`ResNet200 <ResNet200>` object.
 
     :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
 
-    :param blocks: the network’s residual architecture
-
-    :param include_top: if true, includes classification layers
-
-    :param classes: number of classes to classify (include_top must be true)
-
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
-
-    :return model: ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
-
     Usage:
 
-        >>> import keras_resnet.models
+        >>> import keras_resnet.classifiers
 
         >>> shape, classes = (224, 224, 3), 1000
 
         >>> x = keras.layers.Input(shape)
 
-        >>> model = keras_resnet.models.ResNet152(x, classes=classes)
+        >>> model = keras_resnet.classifiers.ResNet200(x)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
-    def __init__(self, inputs, blocks=None, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
-        if blocks is None:
-            blocks = [3, 8, 36, 3]
+    def __init__(self, inputs, classes):
+        outputs = keras_resnet.models.ResNet200(inputs)
 
-        numerical_names = [False, True, True, False]
+        outputs = keras.layers.Flatten()(outputs.output)
 
-        super(ResNet2Dxnor152, self).__init__(
-            inputs,
-            blocks,
-            numerical_names=numerical_names,
-            block=keras_resnet.blocks.bottleneck_2dxnor,
-            include_top=include_top,
-            classes=classes,
-            freeze_bn=freeze_bn,
-            *args,
-            **kwargs
-        )
+#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+        outputs = XnorDense(classes, activation="softmax")(outputs)
 
-
-class ResNet2Dxnor200(ResNet2Dxnor):
-    """
-    Constructs a `keras.models.Model` according to the ResNet200 specifications.
-
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
-
-    :param blocks: the network’s residual architecture
-
-    :param include_top: if true, includes classification layers
-
-    :param classes: number of classes to classify (include_top must be true)
-
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
-
-    :return model: ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
-
-    Usage:
-
-        >>> import keras_resnet.models
-
-        >>> shape, classes = (224, 224, 3), 1000
-
-        >>> x = keras.layers.Input(shape)
-
-        >>> model = keras_resnet.models.ResNet200(x, classes=classes)
-
-        >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
-    """
-    def __init__(self, inputs, blocks=None, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
-        if blocks is None:
-            blocks = [3, 24, 36, 3]
-
-        numerical_names = [False, True, True, False]
-
-        super(ResNet2Dxnor200, self).__init__(
-            inputs,
-            blocks,
-            numerical_names=numerical_names,
-            block=keras_resnet.blocks.bottleneck_2dxnor,
-            include_top=include_top,
-            classes=classes,
-            freeze_bn=freeze_bn,
-            *args,
-            **kwargs
-        )
+        super(ResNet200, self).__init__(inputs, outputs)

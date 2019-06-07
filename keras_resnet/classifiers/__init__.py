@@ -15,3 +15,12 @@ from ._2d import (
     ResNet152,
     ResNet200
 )
+
+from ._2dxnor import (
+    ResNetxnor18,
+    ResNetxnor34,
+    ResNetxnor50,
+    ResNetxnor101,
+    ResNetxnor152,
+    ResNetxnor200
+)
