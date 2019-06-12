@@ -404,8 +404,8 @@ class ResNet18(keras.models.Model):
 
         outputs = keras.layers.Flatten()(outputs.output)
 
-#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
-        outputs = XnorDense(classes, activation="softmax")(outputs)
+        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+#        outputs = XnorDense(classes, activation="softmax")(outputs)
 
         super(ResNet18, self).__init__(inputs, outputs)
 
@@ -433,8 +433,8 @@ class ResNet34(keras.models.Model):
 
         outputs = keras.layers.Flatten()(outputs.output)
 
-#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
-        outputs = XnorDense(classes, activation="softmax")(outputs)
+        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+#        outputs = XnorDense(classes, activation="softmax")(outputs)
     
         super(ResNet34, self).__init__(inputs, outputs)
 
@@ -462,8 +462,8 @@ class ResNet50(keras.models.Model):
 
         outputs = keras.layers.Flatten()(outputs.output)
 
-#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
-        outputs = XnorDense(classes, activation="softmax")(outputs)
+        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+#        outputs = XnorDense(classes, activation="softmax")(outputs)
     
         super(ResNet50, self).__init__(inputs, outputs)
 
@@ -491,8 +491,8 @@ class ResNet101(keras.models.Model):
 
         outputs = keras.layers.Flatten()(outputs.output)
 
-#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
-        outputs = XnorDense(classes, activation="softmax")(outputs)
+        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+#        outputs = XnorDense(classes, activation="softmax")(outputs)
 
         super(ResNet101, self).__init__(inputs, outputs)
 
@@ -521,8 +521,8 @@ class ResNet152(keras.models.Model):
 
         outputs = keras.layers.Flatten()(outputs.output)
 
-#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
-        outputs = XnorDense(classes, activation="softmax")(outputs)
+        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+#        outputs = XnorDense(classes, activation="softmax")(outputs)
 
         super(ResNet152, self).__init__(inputs, outputs)
 
@@ -550,7 +550,7 @@ class ResNet200(keras.models.Model):
 
         outputs = keras.layers.Flatten()(outputs.output)
 
-#        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
-        outputs = XnorDense(classes, activation="softmax")(outputs)
+        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+#        outputs = XnorDense(classes, activation="softmax")(outputs)
 
         super(ResNet200, self).__init__(inputs, outputs)
