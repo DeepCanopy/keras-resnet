@@ -19,6 +19,7 @@ from ._1d import (
 
 from ._2d import (
     ResNet2D,
+    ResNet2D10,
     ResNet2D18,
     ResNet2D34,
     ResNet2D50,
@@ -69,6 +70,7 @@ from ._time_distributed_2d import (
 
 # for backwards compatibility reasons
 ResNet = ResNet2D
+ResNet10 = ResNet2D10
 ResNet18 = ResNet2D18
 ResNet34 = ResNet2D34
 ResNet50 = ResNet2D50

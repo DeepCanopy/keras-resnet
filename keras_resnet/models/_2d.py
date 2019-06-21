@@ -108,6 +108,23 @@ class ResNet2D(keras.Model):
             super(ResNet2D, self).__init__(inputs=inputs, outputs=outputs, *args, **kwargs)
 
 
+class ResNet2D10(ResNet2D):
+    def __init__(self, inputs, blocks=None, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
+        if blocks is None:
+            blocks = [1, 1, 1, 1]
+
+        super(ResNet2D10, self).__init__(
+            inputs,
+            blocks,
+            block=keras_resnet.blocks.basic_2d,
+            include_top=include_top,
+            classes=classes,
+            freeze_bn=freeze_bn,
+            *args,
+            **kwargs
+        )
+
+            
 class ResNet2D18(ResNet2D):
     """
     Constructs a `keras.models.Model` according to the ResNet18 specifications.

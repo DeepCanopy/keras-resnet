@@ -8,6 +8,7 @@ This module implements popular residual classifiers.
 """
 
 from ._2d import (
+    ResNet10,
     ResNet18,
     ResNet34,
     ResNet50,

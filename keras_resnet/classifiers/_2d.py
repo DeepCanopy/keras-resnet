@@ -15,6 +15,17 @@ import keras.regularizers
 import keras_resnet.models
 
 
+class ResNet10(keras.models.Model):
+    def __init__(self, inputs, classes):
+        outputs = keras_resnet.models.ResNet10(inputs)
+
+        outputs = keras.layers.Flatten()(outputs.output)
+
+        outputs = keras.layers.Dense(classes, activation="softmax")(outputs)
+
+        super(ResNet10, self).__init__(inputs, outputs)
+
+
 class ResNet18(keras.models.Model):
     """
     A :class:`ResNet18 <ResNet18>` object.
