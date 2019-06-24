@@ -418,6 +418,7 @@ class ResNet2Dxnor(keras.Model):
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
+    print('Broad Institute ResNet2Dxnor')
     def __init__(
         self,
         inputs,
@@ -609,7 +610,7 @@ class ResNet2Dxnor50(ResNet2Dxnor):
             *args,
             **kwargs
         )
-    print('Ran Broad Institute ResNet2Dxnor50')
+    
 
 class ResNet2Dxnor101(ResNet2Dxnor):
     """
